@@ -63,17 +63,7 @@ def make_correspondence_matrix(service_correspondence, ids, services):
             aggfunc = 'sum')
     cols = wide_format_corresp.columns
     rows = wide_format_corresp.index
-    return (wide_format_corresp).astype(int).as_matrix(), cols, rows
-
-def make_desired_coverage_matrix(history, services):
-    """
-    history: a dataframe with member_id and search_term,
-    where a row existing indicates a discrete event at which the member 
-    showed interest in that service.
-    services: a dataframe with all services
-    """
-    
-    
+    return (wide_format_corresp).astype(int).as_matrix(), rows, cols    
     
 conn = sqlite3.connect("../bind.db")
 services = pull_table(conn, "services")
@@ -83,14 +73,16 @@ members  = pull_table(conn, "members")
 searches = pull_table(conn, "searches")
 conn.close()
 
-coverage_mat, rows, cols = make_correspondence_matrix(
+coverage_mat, cov_rows, cov_cols = make_correspondence_matrix(
         coverage.rename({'plan': 'iden'}, axis = 1), 
         plans.plan, 
         services.service)
 uncoverage_mat = 1 - coverage_mat
 
-history_mat, rows, cols = make_correspondence_matrix(
+history_mat, hist_rows, hist_cols = make_correspondence_matrix(
         searches.rename({'member_id': 'iden'}, axis = 1), 
         members.member_id, 
         services.service)
+
+assert((cov_cols == hist_cols).all())
 
