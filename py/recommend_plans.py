@@ -5,25 +5,10 @@ import pandas as pd
 import sqlite3
 from itertools import product
 
+np.set_printoptions(suppress = True)
+
 def pull_table(conn, table):
     return pd.read_sql_query(f"select * from {table}", conn)
-
-def cross_join(df1, df2):
-    key = 'key123'
-    df1[key], df2[key] = True, True
-    return pd.merge(df1, df2, on = key).drop(key, axis = 1)
-
-def complete_coverage(coverage, plans, services):
-    coverage_cross = (pd.DataFrame(
-            [(plan, service) for plan, service in product(plans.unique(), 
-                                                          services.unique())]))
-    coverage_cross.columns = ['plan', 'service']
-    coverage = coverage.copy()
-    coverage['covered'] = True
-    return pd.merge(coverage_cross,
-                    coverage,
-                    on = ['plan', 'service'], 
-                    how = 'left').fillna(False)
 
 def complete_correspondence(service_correspondence, ids, services):
     """
@@ -59,7 +44,7 @@ def make_correspondence_matrix(service_correspondence, ids, services):
             service_correspondence, ids, services)
     
     wide_format_corresp = corresp_complete.pivot_table(
-            index = 'iden', columns = 'service', values = 'present',
+            index = 'service', columns = 'iden', values = 'present',
             aggfunc = 'sum')
     cols = wide_format_corresp.columns
     rows = wide_format_corresp.index
@@ -73,6 +58,8 @@ members  = pull_table(conn, "members")
 searches = pull_table(conn, "searches")
 conn.close()
 
+services.sort_values('service', inplace = True)
+
 coverage_mat, cov_rows, cov_cols = make_correspondence_matrix(
         coverage.rename({'plan': 'iden'}, axis = 1), 
         plans.plan, 
@@ -84,5 +71,17 @@ history_mat, hist_rows, hist_cols = make_correspondence_matrix(
         members.member_id, 
         services.service)
 
-assert((cov_cols == hist_cols).all())
+## Assert orderings are the same across matrices and frames.
+assert((cov_rows == hist_rows).all())
+assert((cov_cols == plans.plan).all())
+assert((services.service == hist_rows).all())
 
+costs = np.array(services.cost)
+prices = np.array(plans.price)
+at_risk_mat = (history_mat.T * -costs).T
+actual_risk_mat = np.dot(at_risk_mat.T, uncoverage_mat)
+
+## rows are members, columns are plans, values in cells are
+## the negative expected value of having that plan for that member, were
+## they to get treatment for every service in their history.
+expected_negative_value_mat = actual_risk_mat - prices

@@ -1,5 +1,5 @@
 create table members (
-    member_id varchar(2) primary key
+    member_id varchar(2) unique primary key
 );
 
 create table searches (
@@ -8,7 +8,8 @@ create table searches (
 );
 
 create table plans (
-    plan varchar(10) unique primary key
+    plan varchar(10) unique primary key,
+    price float
 );
 
 create table plan_coverage (
@@ -17,7 +18,7 @@ create table plan_coverage (
 );
 
 create table services (
-    service varchar(100),
+    service varchar(100) unique primary key,
     cost float
 );
 
