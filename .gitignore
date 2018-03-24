@@ -3,3 +3,4 @@
 !*.py
 !*.csv
 !.gitignore
+!README.txt
