@@ -4,7 +4,7 @@ create table members (
 
 create table searches (
     member_id varchar(2),
-    search_term varchar(100)
+    service varchar(100)
 );
 
 create table plans (

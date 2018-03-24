@@ -1,6 +1,7 @@
 
 import pandas as pd
 import numpy as np
+#from recommend_plans import make_coverage_matrix
 
 def get_test_coverage_frame():
     coverage_frame = pd.DataFrame([['O','Sinusitus'],
@@ -43,3 +44,5 @@ def coverage_matrix_creation_ok():
                              [1, 1, 1, 0, 1],
                              [0, 0, 0, 0, 0]])
     return np.allclose(coverage_mat, expected_mat)
+
+assert(coverage_matrix_creation_ok())
