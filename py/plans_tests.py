@@ -38,11 +38,15 @@ def coverage_matrix_creation_ok():
     coverage_frame = get_test_coverage_frame()   
     plans = get_test_plans_frame()
     services = get_test_services_frame()
-    coverage_mat = make_coverage_matrix(coverage_frame, plans, services)
+    coverage_mat, _, _ = make_correspondence_matrix(
+        coverage_frame.rename({'plan': 'iden'}, axis = 1), 
+        plans.plan, 
+        services.service)
+    uncoverage_mat = 1 - coverage_mat
     expected_mat = np.array([[0, 0, 0, 1, 0],
                              [1, 1, 0, 0, 0],
                              [1, 1, 1, 0, 1],
                              [0, 0, 0, 0, 0]])
-    return np.allclose(coverage_mat, expected_mat)
+    return np.allclose(uncoverage_mat, expected_mat)
 
 assert(coverage_matrix_creation_ok())

@@ -26,6 +26,13 @@ def complete_coverage(coverage, plans, services):
                     how = 'left').fillna(False)
 
 def complete_correspondence(service_correspondence, ids, services):
+    """
+    expands implicit zeros in service_correspondence to explicit zero
+    rows; in other words, if there is a combination of id and service 
+    not present in service_correspondence, a row with a 0 is added.
+    else the existing row is given a 1. the 1's and 0's go in the new column,
+    'present'.
+    """
     id_service_cross = (pd.DataFrame(
             [(iden, service) for iden, service in product(ids.unique(), 
                                                           services.unique())]))
@@ -39,16 +46,15 @@ def complete_correspondence(service_correspondence, ids, services):
 
 def make_correspondence_matrix(service_correspondence, ids, services):
     """
-    Returns: a matrix where rows are plans and columns are services,
-    The cell at each [plan, service] is 0 if the plan covers that service
-    and 1 if it does not. So a 1 is a sort of "not safe" indicator.
+    Returns: a matrix where rows are ids and columns are services,
+    The cell at each [id, service] is 1 if service is present for the id
+    and 0 if it is not. 
     Arguments: 
-        plans: a dataframe with the column plan
+        ids: a dataframe with the column iden
         services: a dataframe with the column service
-        coverage: a dataframe with a row present for each service each plan 
-        covers.
+        coverage: a dataframe with a row present for time service 
+        corresponds to id.
     """
-    global corresp_complete 
     corresp_complete = complete_correspondence(
             service_correspondence, ids, services)
     
