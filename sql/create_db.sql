@@ -8,6 +8,10 @@ create table searches (
 );
 
 create table plans (
+    plan varchar(10) unique primary key
+);
+
+create table plan_coverage (
     plan varchar(10),
     service varchar(100)
 );
@@ -22,4 +26,5 @@ create table services (
 .import data/members.csv members
 .import data/searches.csv searches
 .import data/plans.csv plans
+.import data/plan_coverage.csv plan_coverage
 .import data/services.csv services

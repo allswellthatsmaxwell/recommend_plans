@@ -1,0 +1,13 @@
+O,Sinusitus
+O,Hip Surgery
+O,Knee Replacement
+O,Carpal Tunnel
+Q,Sinusitus
+Q,STI
+Q,Knee Replacement
+R,STI
+S,Sinusitus
+S,Hip Surgery
+S,STI
+S,Knee Replacement
+S,Carpal Tunnel
