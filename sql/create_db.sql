@@ -8,9 +8,8 @@ create table searches (
 );
 
 create table plans (
-    plan_name varchar(10),
-    service varchar(100),
-    covered varchar(1) default 'N'
+    plan varchar(10),
+    service varchar(100)
 );
 
 create table services (
@@ -18,4 +17,9 @@ create table services (
     cost float
 );
 
-.import members.csv members
+.mode csv
+.separator ","
+.import data/members.csv members
+.import data/searches.csv searches
+.import data/plans.csv plans
+.import data/services.csv services
