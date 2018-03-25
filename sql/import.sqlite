@@ -1,4 +1,4 @@
-.read sql/create_db.sql
+.read sql/schema.sql
 .mode csv
 .separator ","
 .import data/members.csv members
