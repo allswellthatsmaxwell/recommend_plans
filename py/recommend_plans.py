@@ -50,7 +50,7 @@ def make_correspondence_matrix(service_correspondence, ids, services):
     rows = wide_format_corresp.index
     return (wide_format_corresp).astype(int).as_matrix(), rows, cols    
     
-conn = sqlite3.connect("../bind.db")
+conn = sqlite3.connect("../plans_and_services.db")#"../bind.db")
 services = pull_table(conn, "services")
 plans    = pull_table(conn, "plans")
 coverage = pull_table(conn, "plan_coverage")
