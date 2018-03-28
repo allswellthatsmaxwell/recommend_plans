@@ -76,7 +76,7 @@ def generate_services_for_each(ids, service_universe, probas):
     
     """
     contents = []
-    for (iden, i) in zip(ids, range(len(ids))):
+    for (i, iden) in enumerate(ids):
         p = probas[i % len(probas)]
         services = generate_services(service_universe, p)
         for service in services:
@@ -106,9 +106,9 @@ def assign_code_grouping(hcpcs_code):
 DATA_DIR = "../../../data/claims"
 PROVIDER_FILE = "Medicare_Provider_Util_Payment_PUF_CY2015.txt"
 DEFAULT_DATA_DIR = "../data"
-SQL_CREATE_PATH = "../sql/create_db.sql"
 DB_PATH = "../plans_and_services.db"
 
+#%%
 dat = pd.read_csv(f"{DATA_DIR}/{PROVIDER_FILE}", 
                   skiprows = lambda i: i == 1, 
                   nrows = 10000, 
@@ -123,10 +123,10 @@ service_cost.to_sql(name = "services", con = conn,
 populate_with_defaults(DEFAULT_DATA_DIR, conn, ["plans", "members"])
 services = pd.read_sql("select * from services", conn)
 
-coverage_probas = [0.01, 0.33, 0.67, 1]
+coverage_probas = [0.01, 0.33, 0.8, 0.97]
 member_probas = [0.001, 0.01, 0.04]
 histories = generate_member_history(services.service, member_probas, conn)
 coverages = generate_plan_coverage(services.service, coverage_probas, conn)
 histories.to_sql(name = "searches", con = conn, index = False)
 coverages.to_sql(name = "plan_coverage", con = conn, index = False)
-
+conn.close()
